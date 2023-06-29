@@ -1,6 +1,4 @@
-import React from "react";
 import { Cookies } from "react-cookie";
-import { useHistory } from 'react-router';
 const cookie = new Cookies();
 
 export function hasValue(v) {
