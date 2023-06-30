@@ -10,6 +10,7 @@ const Login = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -50,6 +51,7 @@ const handleUserDetails =(responseData,encodedAuthString)=>{
       const encodedAuthString = btoa(`${username}:${authString}`);
 
       try {
+        setLoading(true);
         const response = await fetch('/home/login', {
           method: 'POST',
           headers: {
@@ -62,7 +64,6 @@ const handleUserDetails =(responseData,encodedAuthString)=>{
         if (response.ok) {
           // Handle successful API call
           const responseData = await response.json();
-          alert('You have successfully logged in to Nimesa');
           // console.log('data=', responseData);
           handleUserDetails(responseData,encodedAuthString)
          
@@ -79,7 +80,9 @@ const handleUserDetails =(responseData,encodedAuthString)=>{
         // Handle fetch error
         console.log(error);
         setErrorMessage('An error occurred. Please try again later.');
-      }
+      } finally {
+        setLoading(false);
+      }   
     }
   };
 
@@ -97,7 +100,9 @@ const handleUserDetails =(responseData,encodedAuthString)=>{
             <input type="password" id="password" value={password} onChange={handlePasswordChange} />
           </div>
           {errorMessage && <p className="error">{errorMessage}</p>}
-          <button type="submit">Sign In</button>
+          <button type="submit" disabled={loading}>
+            {loading ?  <div className="loader-sign" /> : 'Sign In'}
+          </button>
         </form>
       </div>
     </div>

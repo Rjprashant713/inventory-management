@@ -118,9 +118,9 @@ const InventoryManagement = () => {
 
   // render listing data table of inventory
   const RenderTable = () => {
-    const isArrayKey = (value) => Array.isArray(value);
+    const isArrayKey = (value) => Array.isArray(value) && value?.length > 0;
 
-    const getArrayKey = () => {
+    const getArrayKey = (listingData) => {
       for (const key in listingData) {
         if (isArrayKey(listingData[key])) {
           return key;
@@ -129,19 +129,23 @@ const InventoryManagement = () => {
       return null;
     };
 
-    const arrayKey = getArrayKey();
 
+    const rdsInstances = listingData?.rdsInstances;
+    const isRdsInstancesValid = rdsInstances && typeof rdsInstances === 'object' && Object.keys(rdsInstances)?.length > 0;
+    
+    const arrayKey = isRdsInstancesValid ? getArrayKey(listingData?.rdsInstances) : getArrayKey(listingData);
+    
     if (!arrayKey) {
       return <p>No data available</p>;
     }
-
-    const instances = listingData[arrayKey];
+    
+    const instances = isRdsInstancesValid ? rdsInstances[arrayKey] : listingData[arrayKey];
     // console.log("instances", instances);
-    if (instances.length === 0) {
+    if (instances?.length === 0) {
       return <p>No data available</p>;
     }
 
-    
+
 
     return loader ? (
       <Loader />
@@ -160,19 +164,19 @@ const InventoryManagement = () => {
               <tr key={index}>
                 {Object.values(instance)?.map((value, idx) => (
                   <td key={idx} className="col-sm-6 tooltipHover">
-                    {typeof value === "object" && value !== null ? (
-                      <div className="tooltip tooltip-bottom">
-                        <span className="tooltip-text">
-                          {Object.values(value).join(", ")}
-                        </span>
-                        {add3Dots(Object.values(value).join(", "), 20)}
-                      </div>
-                    ) : (
-                      <div className="tooltip tooltip-bottom">
-                        <span className="tooltip-text">{value}</span>
-                        {add3Dots(value, 20)}
-                      </div>
-                    )}
+                    <div className="tooltip tooltip-bottom">
+                      <span className="tooltip-text">
+                        {typeof value === "object" && value !== null
+                          ? Object.values(value).join(", ")
+                          : String(value)}
+                      </span>
+                      {add3Dots(
+                        typeof value === "object" && value !== null
+                          ? Object.values(value).join(", ")
+                          : String(value),
+                        20
+                      )}
+                    </div>
                   </td>
                 ))}
               </tr>
@@ -180,7 +184,7 @@ const InventoryManagement = () => {
           </tbody>
         </table>
       </div>
-    );
+    );    
   };
 
   // called initially on page load to get AwsAccounts...
@@ -209,7 +213,6 @@ const InventoryManagement = () => {
 
   return (
     <div className="inventory-management">
-      {/* Select boxes */}
       <div className="select-boxes">
         {/* AWS Account select box */}
         <div className="select-box">
