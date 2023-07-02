@@ -350,6 +350,11 @@ body {
     text-overflow: ellipsis;
     z-index: 9999; 
   }
+  .tooltipHover  svg {
+    font-size: 0.8rem;
+    color: #000;
+    padding-right: 4px;
+  }
   
   .tooltip:hover .tooltip-text {
     visibility: visible;

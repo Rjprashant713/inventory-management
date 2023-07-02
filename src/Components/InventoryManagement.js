@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Loader from "./Loader";
-import { capitalizeFirstLetter } from "../utils/helper";
-import { Cookies } from "react-cookie";
+import { add3Dots, capitalizeFirstLetter} from "../utils/helper";
 import Pagination from "./Paginations";
+import RenderInstanceTable from "./RenderInstanceTable";
 
 const InventoryManagement = () => {
   // local useState to store info
@@ -16,23 +16,14 @@ const InventoryManagement = () => {
     service: "",
   });
   const [listingData, setListingData] = useState([]);
+  const [instance, setInstance] = useState(false);
   const [pageNo, setPageNo] = useState(1);
   const [itemCount, setItemCount] = useState(0);
   const [pageSize] = useState(25);
-  const cookie = new Cookies();
-  const authToken = cookie.get("authToken");
-
-  // func to show dotted format data in table
-  const add3Dots = (string, limit) => {
-    var dots = "...";
-    if (string && string?.length > limit) {
-      string = string.substring(0, limit) + dots;
-    }
-    return string;
-  };
+  const authToken = localStorage.getItem("authToken");
 
   // this API calling function is used for getting the listing data
-  const fetchListingData = (awsAccount, region, service,pageNo=1) => {
+  const fetchListingData = (awsAccount, region, service, pageNo = 1) => {
     setLoader(true);
     const apiUrl = `/aws/inventory/${awsAccount}?region=${region}&objectType=${service.toLowerCase()}&limit=25&offset=${pageNo}`; //&sort_by=instanceId-asc
 
@@ -48,10 +39,16 @@ const InventoryManagement = () => {
         const filteredData = Object.fromEntries(
           Object.entries(data).filter(([_, value]) => !!value)
         );
+        if (service.toLowerCase() === "instance") {
+          setInstance(true);
+        }
+        else{
+          setInstance(false);
+        }
         setListingData(filteredData);
-        setItemCount(filteredData?.totalObject)
+        setItemCount(filteredData?.totalObject);
+        setPageNo(pageNo);
         setLoader(false);
-        // console.log("ListingData", filteredData);
       })
       .catch((error) => {
         console.error("Error fetching listing data:", error);
@@ -129,26 +126,31 @@ const InventoryManagement = () => {
       return null;
     };
 
-
     const rdsInstances = listingData?.rdsInstances;
-    const isRdsInstancesValid = rdsInstances && typeof rdsInstances === 'object' && Object.keys(rdsInstances)?.length > 0;
-    
-    const arrayKey = isRdsInstancesValid ? getArrayKey(listingData?.rdsInstances) : getArrayKey(listingData);
-    
+    const isRdsInstancesValid =
+      rdsInstances &&
+      typeof rdsInstances === "object" &&
+      Object.keys(rdsInstances)?.length > 0;
+
+    const arrayKey = isRdsInstancesValid
+      ? getArrayKey(listingData?.rdsInstances)
+      : getArrayKey(listingData);
+
     if (!arrayKey) {
       return <p>No data available</p>;
     }
-    
-    const instances = isRdsInstancesValid ? rdsInstances[arrayKey] : listingData[arrayKey];
-    // console.log("instances", instances);
+
+    const instances = isRdsInstancesValid
+      ? rdsInstances[arrayKey]
+      : listingData[arrayKey];
     if (instances?.length === 0) {
       return <p>No data available</p>;
     }
 
-
-
     return loader ? (
       <Loader />
+    ) : instance ? (
+      <RenderInstanceTable instanceData={instances} />
     ) : (
       <div className="custom-table-container">
         <table className="custom-table">
@@ -184,7 +186,7 @@ const InventoryManagement = () => {
           </tbody>
         </table>
       </div>
-    );    
+    );
   };
 
   // called initially on page load to get AwsAccounts...
@@ -196,9 +198,8 @@ const InventoryManagement = () => {
   // this useEffect will be called to render listing data once all dependency get..
   useEffect(() => {
     const { awsAccount, region, service } = selectedOptions;
-    // console.log("selectOptions", selectedOptions);
     if (awsAccount && region && service) {
-      fetchListingData(awsAccount, region, service);
+      fetchListingData(awsAccount, region, service,1);
     }
     // eslint-disable-next-line
   }, [selectedOptions]);
@@ -207,9 +208,8 @@ const InventoryManagement = () => {
   const onPaginationChange = (page) => {
     const { awsAccount, region, service } = selectedOptions;
     setPageNo(page);
-    fetchListingData(awsAccount, region, service,page);
-    };
-    
+    fetchListingData(awsAccount, region, service, page);
+  };
 
   return (
     <div className="inventory-management">
@@ -261,19 +261,17 @@ const InventoryManagement = () => {
           </select>
         </div>
       </div>
-      <div className="listing">
-        {<RenderTable />}
-      </div>
+      <div className="listing">{<RenderTable />}</div>
       {itemCount > 25 && (
         <div className="pagination">
-            <Pagination
-                current={pageNo}
-                onChange={onPaginationChange}
-                count={itemCount}
-                size={pageSize}
-            ></Pagination>
+          <Pagination
+            current={pageNo}
+            onChange={onPaginationChange}
+            count={itemCount}
+            size={pageSize}
+          ></Pagination>
         </div>
-       )}
+      )}
     </div>
   );
 };

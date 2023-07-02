@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import "../Styles/Styles.css";
 import fetch from 'isomorphic-fetch';
 import { useHistory } from 'react-router';
-import { Cookies } from "react-cookie";
 
 const Login = () => {
     const history = useHistory();
-    const cookie = new Cookies();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -28,7 +26,7 @@ const handleUserDetails =(responseData,encodedAuthString)=>{
     localStorage.setItem("userRole",responseData?.roleName);
     localStorage.setItem("UserEmail",responseData?.emailId);
     localStorage.setItem("isLoggedIn",true);
-    cookie.set("authToken",encodedAuthString);
+    localStorage.setItem("authToken",encodedAuthString);
 
     history.push('/');
 }
@@ -47,9 +45,8 @@ const handleUserDetails =(responseData,encodedAuthString)=>{
       setErrorMessage('Password should be at least 6 characters long.');
     } else {
       const username = name; //'nimesa'
-      const authString = '14c4d2a7f39d02b467158d2b06c0134f::bd11fec9d0805f8cb49f87c5361974bd::3ifSeJUaKxVb41QJV6QXNA==';
+      const authString = password;
       const encodedAuthString = btoa(`${username}:${authString}`);
-
       try {
         setLoading(true);
         const response = await fetch('/home/login', {
