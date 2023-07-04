@@ -25,15 +25,17 @@ const DefaultLayout = ({ children }) => {
     ];
 
     // Adds event listeners for each activity event that call the `resetTimer` function when triggered.
-    activityEvents.forEach((event) => {
+    for (let i = 0; i < activityEvents.length; i++) {
+      const event = activityEvents[i];
       document.addEventListener(event, resetTimer);
-    });
+    }
 
     // Removes the event listeners when the component unmounts or when the dependency array changes.
     return () => {
-      activityEvents.forEach((event) => {
+      for (let i = 0; i < activityEvents.length; i++) {
+        const event = activityEvents[i];
         document.removeEventListener(event, resetTimer);
-      });
+      }
     };
   }, []); // Empty dependency array ensures the effect runs only once on component mount.
 

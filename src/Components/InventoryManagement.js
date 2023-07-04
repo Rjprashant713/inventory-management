@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Loader from "./Loader";
-import { add3Dots, capitalizeFirstLetter} from "../utils/helper";
+import { add3Dots, capitalizeFirstLetter, customStyles } from "../utils/helper";
 import Pagination from "./Paginations";
 import RenderInstanceTable from "./RenderInstanceTable";
+import Select from "react-select";
 
 const InventoryManagement = () => {
   // local useState to store info
@@ -41,8 +42,7 @@ const InventoryManagement = () => {
         );
         if (service.toLowerCase() === "instance") {
           setInstance(true);
-        }
-        else{
+        } else {
           setInstance(false);
         }
         setListingData(filteredData);
@@ -107,10 +107,16 @@ const InventoryManagement = () => {
   };
 
   const handleOptionChange = (option, value) => {
-    setSelectedOptions((prevOptions) => ({
-      ...prevOptions,
-      [option]: value,
-    }));
+    setSelectedOptions((prevOptions) => {
+      // Check if the selected option is the same as the current value
+      if (prevOptions[option] === value) {
+        return prevOptions; // Return early without making the API call
+      }
+      return {
+        ...prevOptions,
+        [option]: value,
+      };
+    });
   };
 
   // render listing data table of inventory
@@ -199,7 +205,7 @@ const InventoryManagement = () => {
   useEffect(() => {
     const { awsAccount, region, service } = selectedOptions;
     if (awsAccount && region && service) {
-      fetchListingData(awsAccount, region, service,1);
+      fetchListingData(awsAccount, region, service, 1);
     }
     // eslint-disable-next-line
   }, [selectedOptions]);
@@ -214,51 +220,62 @@ const InventoryManagement = () => {
   return (
     <div className="inventory-management">
       <div className="select-boxes">
-        {/* AWS Account select box */}
         <div className="select-box">
           <label htmlFor="aws-account">Select AWS Account</label>
-          <select
+          <Select
             name="aws-account"
             id="aws-account"
-            value={selectedOptions.awsAccount}
-            onChange={(e) => handleOptionChange("awsAccount", e.target.value)}
-          >
-            {awsAccounts?.map((account, index) => (
-              <option key={index} value={account}>
-                {account}
-              </option>
-            ))}
-          </select>
+            value={{
+              value: selectedOptions.awsAccount,
+              label: selectedOptions.awsAccount,
+            }}
+            onChange={(option) =>
+              handleOptionChange("awsAccount", option.value)
+            }
+            options={awsAccounts.map((account) => ({
+              value: account,
+              label: account,
+            }))}
+            isSearchable={true}
+            styles={customStyles}
+          />
         </div>
 
         {/* Region select box */}
         <div className="select-box">
           <label htmlFor="region">Select Region</label>
-          <select
+          <Select
             name="region"
             id="region"
-            value={selectedOptions.region}
-            onChange={(e) => handleOptionChange("region", e.target.value)}
-          >
-            <option value={regions}>{regions}</option>
-          </select>
+            value={{
+              value: selectedOptions.region,
+              label: selectedOptions.region,
+            }}
+            onChange={(option) => handleOptionChange("region", option.value)}
+            options={[{ value: regions, label: regions }]}
+            isSearchable={true}
+            styles={customStyles}
+          />
         </div>
 
         {/* Service select box */}
         <div className="select-box">
           <label htmlFor="service">Select a Service</label>
-          <select
+          <Select
             name="service"
             id="service"
-            value={selectedOptions.service}
-            onChange={(e) => handleOptionChange("service", e.target.value)}
-          >
-            {services?.map((service, index) => (
-              <option key={index} value={service.serviceName}>
-                {service.serviceName} ({service.count})
-              </option>
-            ))}
-          </select>
+            value={{
+              value: selectedOptions.service,
+              label: selectedOptions.service,
+            }}
+            onChange={(option) => handleOptionChange("service", option.value)}
+            options={services.map((service) => ({
+              value: service.serviceName,
+              label: `${service.serviceName} (${service.count})`,
+            }))}
+            isSearchable={true}
+            styles={customStyles}
+          />
         </div>
       </div>
       <div className="listing">{<RenderTable />}</div>

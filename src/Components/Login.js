@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../Styles/Styles.css";
 import fetch from 'isomorphic-fetch';
 import { useHistory } from 'react-router';
+import { AccountCircle, Lock } from '@material-ui/icons';
 
 const Login = () => {
     const history = useHistory();
@@ -9,6 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -30,6 +32,9 @@ const handleUserDetails =(responseData,encodedAuthString)=>{
 
     history.push('/');
 }
+const toggleShowPassword = () => {
+  setShowPassword(!showPassword);
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,15 +94,37 @@ const handleUserDetails =(responseData,encodedAuthString)=>{
         <img src="/images/nimesa-logo.png" alt="Nimesa Logo" className="logo" />
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name">Name</label>
-            <input type="text" id="name" value={name} onChange={handleNameChange} />
+            <label htmlFor="name">Username</label>
+            <div className="input-with-icon1">
+              <AccountCircle className="input-icon" />
+              <input type="text" id="name" value={name} onChange={handleNameChange} placeholder="Username" />
+            </div>
           </div>
-          <div className="form-group">
+          <div className="form-group1">
             <label htmlFor="password">Password</label>
-            <input type="password" id="password" value={password} onChange={handlePasswordChange} />
+            <div className="input-with-icon"> 
+            <Lock className="input-icon" />
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="Password"
+            />
+            <div
+              className={`password-toggle-icon ${showPassword ? 'visible' : ''}`}
+              onClick={toggleShowPassword}
+            >
+                {showPassword ? (
+                      <img src="/images/crossed_eye.svg" alt="" />
+                    ) : (
+                      <img src="/images/show-pass-eye-icon.svg" alt="" />
+                    )}
+              </div>
+            </div>
           </div>
           {errorMessage && <p className="error">{errorMessage}</p>}
-          <button type="submit" disabled={loading}>
+          <button type="submit" className="signIn-btn" disabled={loading}>
             {loading ?  <div className="loader-sign" /> : 'Sign In'}
           </button>
         </form>

@@ -48,3 +48,32 @@ export const capitalizeFirstLetter = (string) => {
     }
     return string;
   };
+  export const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      minHeight: "8px", // Adjust the height as needed
+      width: "100%", // Adjust the width as needed
+      fontSize: "12px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+      zIndex: 999, // Set a higher z-index value
+    }),
+    menuList: (provided) => ({
+      ...provided,
+      "&::-webkit-scrollbar": {
+        width: "5px",
+        height: "5px",
+        backgroundColor: "#fff",
+        borderRadius: "3px",
+      },
+      "&::-webkit-scrollbar-track": {
+        backgroundColor: "#fff",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        background: "#C4C4C4",
+        borderRadius: "3px",
+      },
+    }),
+  };
