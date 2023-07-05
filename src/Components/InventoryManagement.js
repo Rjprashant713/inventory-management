@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Loader from "./Loader";
-import { add3Dots, capitalizeFirstLetter, customStyles } from "../utils/helper";
+import { add3Dots, capitalizeFirstLetter, customStyles, serviceDropDownOptions } from "../utils/helper";
 import Pagination from "./Paginations";
 import RenderInstanceTable from "./RenderInstanceTable";
 import Select from "react-select";
@@ -22,6 +22,20 @@ const InventoryManagement = () => {
   const [itemCount, setItemCount] = useState(0);
   const [pageSize] = useState(25);
   const authToken = localStorage.getItem("authToken");
+  const [serviceDropDownOption, setServiceDropDownOption] = useState(serviceDropDownOptions);
+
+  useEffect(() => {
+    if (services.length > 0) {
+      const updatedServiceDropDownOptions = serviceDropDownOptions.map(service => {
+        const matchedService = services.find(data => data.serviceName === service.serviceName);
+        if (matchedService && matchedService.count > 0) {
+          service.count = matchedService.count;
+        }
+        return service;
+      });
+      setServiceDropDownOption(updatedServiceDropDownOptions);
+    }
+  }, [services,awsAccounts,regions]);
 
   // this API calling function is used for getting the listing data
   const fetchListingData = (awsAccount, region, service, pageNo = 1) => {
@@ -201,6 +215,13 @@ const InventoryManagement = () => {
     // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    if (selectedOptions.awsAccount) {
+      fetchRegions(selectedOptions.awsAccount);
+    }
+    // eslint-disable-next-line
+  }, [selectedOptions.awsAccount]);
+
   // this useEffect will be called to render listing data once all dependency get..
   useEffect(() => {
     const { awsAccount, region, service } = selectedOptions;
@@ -208,7 +229,8 @@ const InventoryManagement = () => {
       fetchListingData(awsAccount, region, service, 1);
     }
     // eslint-disable-next-line
-  }, [selectedOptions]);
+  }, [selectedOptions.awsAccount, selectedOptions.region, selectedOptions.service]);
+
 
   //for page change
   const onPaginationChange = (page) => {
@@ -261,19 +283,23 @@ const InventoryManagement = () => {
         {/* Service select box */}
         <div className="select-box">
           <label htmlFor="service">Select a Service</label>
-          <Select
-            name="service"
-            id="service"
-            value={{
-              value: selectedOptions.service,
-              label: selectedOptions.service,
-            }}
-            onChange={(option) => handleOptionChange("service", option.value)}
-            options={services.map((service) => ({
-              value: service.serviceName,
-              label: `${service.serviceName} (${service.count})`,
+           <Select
+            value={{ label: selectedOptions.service, value: selectedOptions.service }}
+            options={serviceDropDownOption.map(service => ({
+              label: (
+                <div className="service-option">
+                <div>
+                  <img src={service.imageURL} alt={service.label} />
+                  {service.label} 
+                </div>
+                <div className="service-count">
+                  {service.count}
+                </div>
+                </div>
+              ),
+              value: service.value,
             }))}
-            isSearchable={true}
+            onChange={(option) => handleOptionChange("service", option.value)}
             styles={customStyles}
           />
         </div>

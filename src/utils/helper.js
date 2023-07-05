@@ -77,3 +77,86 @@ export const capitalizeFirstLetter = (string) => {
       },
     }),
   };
+
+const serviceDropDownOptions = [
+  {
+      "serviceName": "INSTANCE",
+      "count": 0,
+      "imageURL": "/images/EC2_Instances.png",
+      "label": "EC2 Instances",
+      "value": "INSTANCE"
+  },
+  {
+      "serviceName": "VOLUME",
+      "count": 0,
+      "imageURL": "/images/EBS-Volumes.png",
+      "label": "EBS Volumes",
+      "value": "VOLUME"
+  },
+  {
+      "serviceName": "RDS",
+      "count": 0,
+      "imageURL": "/images/RDS-Instance.png",
+      "label": "RDS Instances",
+      "value": "RDS"
+  },
+  {
+      "serviceName": "LOAD_BALANCER",
+      "count": 0,
+      "imageURL": "/images/Load-balancer.png",
+      "label": "Load Balancer",
+      "value": "LOAD_BALANCER"
+  },
+  {
+      "serviceName": "S3",
+      "count": 0,
+      "imageURL": "/images/S3-Bucket.png",
+      "label": "S3 Buckets",
+      "value": "S3"
+  },
+  {
+      "serviceName": "LAMBDA",
+      "count": 0,
+      "imageURL": "/images/lambda-icon.png",
+      "label": "Lambda",
+      "value": "LAMBDA"
+  },
+  {
+    "serviceName": "DynamoDB",
+    "count": 0,
+    "imageURL": "/images/DynamoDB.png",
+    "label": "DynamoDB",
+    "value": "DynamoDB"
+  },
+  {
+    "serviceName": "EFS",
+    "count": 0,
+    "imageURL": "/images/EFS.png",
+    "label": "Elastic File System",
+    "value": "EFS"
+  },
+  {
+    "serviceName": "EKS",
+    "count": 0,
+    "imageURL": "/images/EKS.png",
+    "label": "Elastic Kubernetes Service",
+    "value": "EKS"
+  },
+  {
+    "serviceName": "ECR",
+    "count": 0,
+    "imageURL": "/images/ECR.png",
+    "label": "Elastic Container Registry",
+    "value": "ECR"
+  },
+  {
+    "serviceName": "FSX",
+    "count": 0,
+    "imageURL": "/images/FSX.png",
+    "label": "ESX",
+    "value": "FSX"
+  },
+]
+
+export {serviceDropDownOptions}
+
