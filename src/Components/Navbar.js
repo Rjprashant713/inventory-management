@@ -101,15 +101,14 @@ const Navbar = ({ lastInactiveTime }) => {
             <img src="/images/nimesa-logo.png" alt="Nimesa Logo" />
           </Link>
         </div>
+        <div className="dropdown">
         {lastInactiveTime && getSecondsTimer(elapsedTime) > 2 ? (
           <div className="inactive-timer">
             Idle for: {formatElapsedTime(elapsedTime)}
           </div>
         ) : (
-          <div className="inactive-timer">You are active now.</div>
+          <div className="active-timer">You are active now.</div>
         )}
-
-        <div className="dropdown">
           <button
             className="dropdown-toggle"
             onClick={toggleUserActions}
