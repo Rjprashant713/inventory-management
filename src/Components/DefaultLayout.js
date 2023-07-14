@@ -63,7 +63,7 @@ const DefaultLayout = ({ children }) => {
 
   return (
     <>
-      <Navbar />
+      <Navbar lastInactiveTime={lastActivity}/>
       <div className="dashboard-container">
         <MainSidebar />
         <div className="dashboard-content">{children}</div>

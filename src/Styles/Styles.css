@@ -648,5 +648,12 @@ button {
   cursor: pointer;
 }
 
+.inactive-timer {
+  display: flex;
+  margin-top: 24px;
+  width: 100%;
+}
+
+
 
 
