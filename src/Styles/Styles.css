@@ -281,7 +281,7 @@ button {
 
 /* Navbar.css */
 .navbar {
-  background: linear-gradient(to right, #1a2980, #26d0ce);
+  background: linear-gradient(to right, #1a2980, #0fbbb9);
   color: #fff;
   padding: 5px;
   display: flex;
@@ -653,13 +653,13 @@ button {
   display: flex;
   margin-top: 36px;
   width: 112px;
-  color: #d60b0b;
+  color: #a80b0b;
 }
 .active-timer {
   display: flex;
   margin-top: 36px;
   width: 112px;
-  color: #07f407;
+  color: #45ff0a;
 }
 
 

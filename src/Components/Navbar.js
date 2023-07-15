@@ -92,7 +92,7 @@ const Navbar = ({ lastInactiveTime }) => {
               Idle for: {formatElapsedTime(elapsedTime)}
             </div>
           ) : (
-            <div className="active-timer">You are active now.</div>
+            <div className="active-timer">You are active now</div>
           )}
           <button
             className="dropdown-toggle"
